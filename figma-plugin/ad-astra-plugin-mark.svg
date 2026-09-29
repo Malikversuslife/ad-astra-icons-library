@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="32%" cy="20%" r="90%"><stop stop-color="#2d3858"/><stop offset=".56" stop-color="#151a29"/><stop offset="1" stop-color="#090b11"/></radialGradient>
+    <linearGradient id="metal" x1="92" y1="56" x2="422" y2="447" gradientUnits="userSpaceOnUse"><stop stop-color="#fbfdff"/><stop offset=".18" stop-color="#75819a"/><stop offset=".42" stop-color="#e8edf8"/><stop offset=".74" stop-color="#323c52"/><stop offset="1" stop-color="#b9c6df"/></linearGradient>
+    <linearGradient id="spectral" x1="170" y1="120" x2="356" y2="372" gradientUnits="userSpaceOnUse"><stop stop-color="#6285ff"/><stop offset=".55" stop-color="#9a82ff"/><stop offset="1" stop-color="#e4d6ff"/></linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="256" cy="254" r="154" fill="none" stroke="#7d8dac" stroke-opacity=".17" stroke-width="13"/>
+  <circle cx="256" cy="254" r="97" fill="none" stroke="url(#spectral)" stroke-opacity=".52" stroke-width="20" filter="url(#glow)"/>
+  <path d="M256 89c58 51 82 113 69 191l-69 83-69-83c-13-78 11-140 69-191Z" fill="none" stroke="url(#metal)" stroke-width="18" stroke-linejoin="round"/>
+  <circle cx="256" cy="213" r="25" fill="none" stroke="url(#spectral)" stroke-width="18"/>
+  <path d="m187 277-70 75 81-21m127-54 70 75-81-21M256 363v61" fill="none" stroke="url(#metal)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 368v52" fill="none" stroke="url(#spectral)" stroke-width="12" stroke-linecap="round"/>
+</svg>
