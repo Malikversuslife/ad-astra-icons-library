@@ -231,13 +231,19 @@ function svgFor(name, accent = '#8f83ff') {
     '<defs><linearGradient id="' + metal + '" x1="10" y1="8" x2="78" y2="82" gradientUnits="userSpaceOnUse"><stop stop-color="#f6f8ff"/><stop offset=".19" stop-color="#687187"/><stop offset=".46" stop-color="#f0f3fb"/><stop offset=".72" stop-color="#2b3244"/><stop offset="1" stop-color="#b7c1d6"/></linearGradient><linearGradient id="' + spectral + '" x1="20" y1="18" x2="72" y2="72" gradientUnits="userSpaceOnUse"><stop stop-color="#5577ff"/><stop offset=".52" stop-color="' + accent + '"/><stop offset="1" stop-color="#e5d7ff"/></linearGradient></defs>' + artwork + '</svg>';
 }
 
-const sendCatalog = async () => {
-  const favorites = await figma.clientStorage.getAsync('ad-astra-favorites') || [];
-  figma.ui.postMessage({ type: 'catalog', icons: Object.keys(icons).map((name) => ({ name, category: categories[name], svg: svgFor(name) })), favorites });
+const sendCatalog = () => {
+  const catalogue = Object.keys(icons).map((name) => ({ name, category: categories[name], svg: svgFor(name) }));
+  figma.ui.postMessage({ type: 'catalog-start', total: catalogue.length });
+  for (let index = 0; index < catalogue.length; index += 18) {
+    figma.ui.postMessage({ type: 'catalog-batch', icons: catalogue.slice(index, index + 18) });
+  }
+  figma.clientStorage.getAsync('ad-astra-favorites')
+    .then((favorites) => figma.ui.postMessage({ type: 'catalog-complete', favorites: favorites || [] }))
+    .catch(() => figma.ui.postMessage({ type: 'catalog-complete', favorites: [] }));
 };
 
 figma.ui.onmessage = async (message) => {
-  if (message.type === 'ready') await sendCatalog();
+  if (message.type === 'ready') sendCatalog();
   if (message.type === 'set-favorites') await figma.clientStorage.setAsync('ad-astra-favorites', message.favorites);
   if (message.type === 'insert') {
     const node = figma.createNodeFromSvg(svgFor(message.name, message.accent));
