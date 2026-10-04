@@ -43,11 +43,13 @@ function svgFor(name, accent = '#8f83ff') {
     '<defs><linearGradient id="' + metal + '" x1="10" y1="8" x2="78" y2="82" gradientUnits="userSpaceOnUse"><stop stop-color="#f6f8ff"/><stop offset=".19" stop-color="#687187"/><stop offset=".46" stop-color="#f0f3fb"/><stop offset=".72" stop-color="#2b3244"/><stop offset="1" stop-color="#b7c1d6"/></linearGradient><linearGradient id="' + spectral + '" x1="20" y1="18" x2="72" y2="72" gradientUnits="userSpaceOnUse"><stop stop-color="#5577ff"/><stop offset=".52" stop-color="' + accent + '"/><stop offset="1" stop-color="#e5d7ff"/></linearGradient></defs>' + artwork + '</svg>';
 }
 
+const sendCatalog = async () => {
+  const favorites = await figma.clientStorage.getAsync('ad-astra-favorites') || [];
+  figma.ui.postMessage({ type: 'catalog', icons: Object.keys(icons).map((name) => ({ name, category: categories[name], svg: svgFor(name) })), favorites });
+};
+
 figma.ui.onmessage = async (message) => {
-  if (message.type === 'ready') {
-    const favorites = await figma.clientStorage.getAsync('ad-astra-favorites') || [];
-    figma.ui.postMessage({ type: 'catalog', icons: Object.keys(icons).map((name) => ({ name, category: categories[name], svg: svgFor(name) })), favorites });
-  }
+  if (message.type === 'ready') await sendCatalog();
   if (message.type === 'set-favorites') await figma.clientStorage.setAsync('ad-astra-favorites', message.favorites);
   if (message.type === 'insert') {
     const node = figma.createNodeFromSvg(svgFor(message.name, message.accent));
@@ -61,6 +63,10 @@ figma.ui.onmessage = async (message) => {
   }
   if (message.type === 'get-svg') figma.ui.postMessage({ type: 'svg', svg: svgFor(message.name, message.accent) });
 };
+
+// A UI can finish loading before Figma attaches its message listener. Send the
+// catalogue proactively too, so an early ready message cannot leave it blank.
+setTimeout(sendCatalog, 200);
 `;
 
 fs.writeFileSync('code.js', code);
